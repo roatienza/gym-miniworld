@@ -461,8 +461,15 @@ class MiniWorldEnv(gym.Env):
         window_width=800,
         window_height=600,
         params=DEFAULT_PARAMS,
-        domain_rand=False
+        domain_rand=False,
+        is_render_depth=True
     ):
+        # Do we observe depth instead
+        self.is_render_depth = is_render_depth
+        if is_render_depth:
+            obs_width = 1
+            obs_height = 1
+
         # Action enumeration for this environment
         self.actions = MiniWorldEnv.Actions
 
@@ -507,6 +514,8 @@ class MiniWorldEnv(gym.Env):
         # Compute the observation display size
         self.obs_disp_width = 256
         self.obs_disp_height = obs_height * (self.obs_disp_width / obs_width)
+
+
 
         # For displaying text
         self.text_label = pyglet.text.Label(
@@ -702,7 +711,15 @@ class MiniWorldEnv(gym.Env):
             self.agent.carrying.dir = self.agent.dir
 
         # Generate the current camera image
-        obs = self.render_obs()
+        if self.is_render_depth:
+            obs = [self.render_depth()]
+            for i in range(3):
+                deg = (i+1)*90.
+                self.turn_agent(deg)
+                obs.append(self.render_depth())
+                self.turn_agent(-deg)
+        else:
+            obs = self.render_obs()
 
         # If the maximum time step count is reached
         if self.step_count >= self.max_episode_steps:

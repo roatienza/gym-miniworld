@@ -40,6 +40,14 @@ def step(action):
     print('step {}/{}: {}'.format(env.step_count+1, env.max_episode_steps, env.actions(action).name))
 
     obs, reward, done, info = env.step(action)
+    if isinstance(obs, list):
+        print("obs len", len(obs))
+        for i in range(len(obs)):
+            #print("obs[%d] shape: %s" % (i, obs[i].shape))
+            print(np.mean(obs[i]))
+    else:
+        print("obs shape: ", obs.shape)
+        print('min: %f, max: %f' % (np.amin(obs), np.amax(obs)))
 
     if reward > 0:
         print('reward={:.2f}'.format(reward))
