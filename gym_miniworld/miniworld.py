@@ -470,6 +470,9 @@ class MiniWorldEnv(gym.Env):
             obs_width = 1
             obs_height = 1
 
+        self.no_collision = False
+        self.obs = []
+
         # Action enumeration for this environment
         self.actions = MiniWorldEnv.Actions
 
@@ -676,19 +679,21 @@ class MiniWorldEnv(gym.Env):
         fwd_drift = self.params.sample(rand, 'forward_drift')
         turn_step = self.params.sample(rand, 'turn_step')
 
+        self.no_collision = True
         if action == self.actions.move_forward:
-            self.move_agent(fwd_step, fwd_drift)
+            self.no_collision = self.move_agent(fwd_step, fwd_drift)
 
         elif action == self.actions.move_back:
-            self.move_agent(-fwd_step, fwd_drift)
+            self.no_collision = self.move_agent(-fwd_step, fwd_drift)
 
         elif action == self.actions.turn_left:
-            self.turn_agent(turn_step)
+            self.no_collision = self.turn_agent(turn_step)
 
         elif action == self.actions.turn_right:
-            self.turn_agent(-turn_step)
+            self.no_collision = self.turn_agent(-turn_step)
 
         # Pick up an object
+        '''
         elif action == self.actions.pickup:
             # Position at which we will test for an intersection
             test_pos = self.agent.pos + self.agent.dir_vec * 1.5 * self.agent.radius
@@ -709,16 +714,20 @@ class MiniWorldEnv(gym.Env):
             ent_pos = self._get_carry_pos(self.agent.pos, self.agent.carrying)
             self.agent.carrying.pos = ent_pos
             self.agent.carrying.dir = self.agent.dir
+        '''
 
-        # Generate the current camera image
+        
         if self.is_render_depth:
-            obs = [self.render_depth()]
+            # Generate 4-axis (front, back, left, right) depth pts
+            obs = [np.mean(self.render_depth())]
             for i in range(3):
                 deg = (i+1)*90.
                 self.turn_agent(deg)
-                obs.append(self.render_depth())
+                obs.append(np.mean(self.render_depth()))
                 self.turn_agent(-deg)
+            self.obs = obs
         else:
+            # Generate the current camera image
             obs = self.render_obs()
 
         # If the maximum time step count is reached
@@ -1025,8 +1034,13 @@ class MiniWorldEnv(gym.Env):
         """
         Default sparse reward computation
         """
-
-        return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
+        if self.is_render_depth and len(self.obs) > 0:
+            if self.no_collision:
+                return 1. if self.obs[0] > 1. else 0.
+            else:
+                return -1.
+        else:
+            return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
 
     def _render_static(self):
         """

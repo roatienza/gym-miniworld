@@ -44,13 +44,13 @@ def step(action):
         print("obs len", len(obs))
         for i in range(len(obs)):
             #print("obs[%d] shape: %s" % (i, obs[i].shape))
-            print(np.mean(obs[i]))
+            print(obs[i])
     else:
         print("obs shape: ", obs.shape)
         print('min: %f, max: %f' % (np.amin(obs), np.amax(obs)))
 
-    if reward > 0:
-        print('reward={:.2f}'.format(reward))
+    #if reward > 0:
+    print('reward={:.2f}'.format(reward))
 
     if done:
         print('done!')
