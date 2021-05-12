@@ -9,7 +9,7 @@ import sys
 import argparse
 import pyglet
 import math
-from pyglet.window import key
+#from pyglet.window import key
 from pyglet import clock
 import numpy as np
 import gym
@@ -56,34 +56,33 @@ def on_key_press(symbol, modifiers):
     This handler processes keyboard commands that
     control the simulation
     """
+    #if symbol == key.BACKSPACE or symbol == key.SLASH:
+    #    print('RESET')
+    #    env.reset()
+    #    env.render('pyglet', view=view_mode)
+    #    return
 
-    if symbol == key.BACKSPACE or symbol == key.SLASH:
-        print('RESET')
-        env.reset()
-        env.render('pyglet', view=view_mode)
-        return
+    #if symbol == key.ESCAPE:
+    #    env.close()
+    #    sys.exit(0)
+    #elif symbol == key.PAGEUP or symbol == key.P:
+    #    step(env.actions.pickup)
+    #elif symbol == key.PAGEDOWN or symbol == key.D:
+    #    step(env.actions.drop)
 
-    if symbol == key.ESCAPE:
-        env.close()
-        sys.exit(0)
 
-    if symbol == key.UP:
+    if symbol == 65362:
         step(env.actions.move_forward)
-    elif symbol == key.DOWN:
+    elif symbol == 65364:
         step(env.actions.move_back)
-
-    elif symbol == key.LEFT:
+    elif symbol == 65361:
         step(env.actions.turn_left)
-    elif symbol == key.RIGHT:
+    elif symbol == 65363:
         step(env.actions.turn_right)
-
-    elif symbol == key.PAGEUP or symbol == key.P:
-        step(env.actions.pickup)
-    elif symbol == key.PAGEDOWN or symbol == key.D:
-        step(env.actions.drop)
-
-    elif symbol == key.ENTER:
+    elif symbol == 32:
         step(env.actions.done)
+        pyglet.app.exit()
+
 
 @env.unwrapped.window.event
 def on_key_release(symbol, modifiers):
