@@ -1067,9 +1067,10 @@ class MiniWorldEnv(gym.Env):
         """
         Default sparse reward computation
         """
-        if self.is_render_depth and len(self.obs) > 0:
+        if self.is_render_depth:
             if self.no_collision:
-                return 1. if self.obs[0] > 1. else 0.
+                obs = np.mean(np.clip(self.obs, 0, 1))
+                return 1. if obs > 1. else 0.
             else:
                 return -1.
         else:
