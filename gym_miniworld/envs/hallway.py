@@ -15,7 +15,7 @@ class Hallway(MiniWorldEnv):
         self.length = length
 
         super().__init__(
-            max_episode_steps=10000,
+            max_episode_steps=1000,
             **kwargs
         )
 
