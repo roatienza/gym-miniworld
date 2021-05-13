@@ -1069,8 +1069,14 @@ class MiniWorldEnv(gym.Env):
         """
         if self.is_render_depth:
             if self.no_collision:
-                obs = np.mean(np.clip(self.obs, 0, 1))
-                return 1. if obs >= 0.5 else 0.
+                #obs = np.mean(np.clip(self.obs, 0, 1))
+                front = self.obs[0]
+                right = self.obs[1]
+                if right >= 0.4 and right<= 0.5 and front > 1.:
+                    return 1.
+                else:
+                    return 0. 
+                #return 1. if obs >= 0.5 else 0.
             else:
                 return -1.
         else:

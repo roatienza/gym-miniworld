@@ -40,7 +40,7 @@ def step(action):
     print('step {}/{}: {}'.format(env.step_count+1, env.max_episode_steps, env.actions(action).name))
 
     obs, reward, done, info = env.step(action)
-    if isinstance(obs, list):
+    if env.is_render_depth:
         print("obs len", len(obs))
         for i in range(len(obs)):
             #print("obs[%d] shape: %s" % (i, obs[i].shape))
