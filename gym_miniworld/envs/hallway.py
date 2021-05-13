@@ -19,8 +19,11 @@ class Hallway(MiniWorldEnv):
             **kwargs
         )
 
-        # Allow only movement actions (left/right/forward)
-        self.action_space = spaces.Discrete(self.actions.move_forward+1)
+        if self.is_render_depth:
+            pass
+        else:
+            # Allow only movement actions (left/right/forward)
+            self.action_space = spaces.Discrete(self.actions.move_forward+1)
 
     def _gen_world(self):
         # Create a long rectangular room
