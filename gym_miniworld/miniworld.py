@@ -1,5 +1,6 @@
 import math
 from enum import IntEnum
+from gym.utils.seeding import np_random
 import numpy as np
 import gym
 from gym import spaces
@@ -452,6 +453,19 @@ class MiniWorldEnv(gym.Env):
 
         # Done completing task
         done = 7
+    
+    class DiscreteActions(IntEnum):
+        # Turn left or right by a small amount
+        turn_left = 0
+        turn_right = 1
+
+        # Move forward or back by a small amount
+        move_forward = 2
+        move_back = 3
+
+        stay_put = 4
+        # Done completing task
+        done = 5
 
     def __init__(
         self,
@@ -462,31 +476,45 @@ class MiniWorldEnv(gym.Env):
         window_height=600,
         params=DEFAULT_PARAMS,
         domain_rand=False,
-        is_render_depth=True
+        is_render_depth=True    # output depth pts on 4 axes instead of image
     ):
         # Do we observe depth instead
         self.is_render_depth = is_render_depth
         if is_render_depth:
+            # Action enumeration for this environment
+            self.actions = MiniWorldEnv.DiscreteActions
+            # Actions are discrete integer values
+            self.action_space = spaces.Discrete(len(self.actions)-1)
+
+            # Actions are continuous
+            #n_actions = len(self.actions)
+            #self.action_space = spaces.Box(-1., 1., shape=(n_actions,), dtype='float32')
+
             obs_width = 1
             obs_height = 1
+            self.observation_space = spaces.Box(
+                low=0.,
+                high=np.inf,
+                shape=(obs_height, obs_width, 1),
+                dtype='float32'
+            )
+            self.obs = np.zeros(self.observation_space.shape)
+        else:
+            # Action enumeration for this environment
+            self.actions = MiniWorldEnv.Actions
+
+            # Actions are discrete integer values
+            self.action_space = spaces.Discrete(len(self.actions))
+
+            # Observations are RGB images with pixels in [0, 255]
+            self.observation_space = spaces.Box(
+                low=0,
+                high=255,
+                shape=(obs_height, obs_width, 3),
+                dtype=np.uint8
+            )
 
         self.no_collision = False
-        self.obs = []
-
-        # Action enumeration for this environment
-        self.actions = MiniWorldEnv.Actions
-
-        # Actions are discrete integer values
-        self.action_space = spaces.Discrete(len(self.actions))
-
-        # Observations are RGB images with pixels in [0, 255]
-        self.observation_space = spaces.Box(
-            low=0,
-            high=255,
-            shape=(obs_height, obs_width, 3),
-            dtype=np.uint8
-        )
-
         self.reward_range = (-math.inf, math.inf)
 
         # Maximum number of steps per episode
@@ -517,8 +545,6 @@ class MiniWorldEnv(gym.Env):
         # Compute the observation display size
         self.obs_disp_width = 256
         self.obs_disp_height = obs_height * (self.obs_disp_width / obs_width)
-
-
 
         # For displaying text
         self.text_label = pyglet.text.Label(
@@ -667,34 +693,23 @@ class MiniWorldEnv(gym.Env):
 
         return True
 
-    def step(self, action):
-        """
-        Perform one action and update the simulation
-        """
-
-        self.step_count += 1
-
+    def discrete_step(self, action):
         rand = self.rand if self.domain_rand else None
         fwd_step = self.params.sample(rand, 'forward_step')
         fwd_drift = self.params.sample(rand, 'forward_drift')
         turn_step = self.params.sample(rand, 'turn_step')
-
-        self.no_collision = True
         if action == self.actions.move_forward:
             self.no_collision = self.move_agent(fwd_step, fwd_drift)
-
         elif action == self.actions.move_back:
             self.no_collision = self.move_agent(-fwd_step, fwd_drift)
-
         elif action == self.actions.turn_left:
             self.no_collision = self.turn_agent(turn_step)
-
         elif action == self.actions.turn_right:
             self.no_collision = self.turn_agent(-turn_step)
-
+        if self.is_render_depth:
+            return
         # Pick up an object
-        '''
-        elif action == self.actions.pickup:
+        if action == self.actions.pickup:
             # Position at which we will test for an intersection
             test_pos = self.agent.pos + self.agent.dir_vec * 1.5 * self.agent.radius
             ent = self.intersect(self.agent, test_pos, 1.2 * self.agent.radius)
@@ -702,22 +717,31 @@ class MiniWorldEnv(gym.Env):
                 if isinstance(ent, Entity):
                     if not ent.is_static:
                         self.agent.carrying = ent
-
         # Drop an object being carried
         elif action == self.actions.drop:
             if self.agent.carrying:
                 self.agent.carrying.pos[1] = 0
                 self.agent.carrying = None
-
         # If we are carrying an object, update its position as we move
         if self.agent.carrying:
             ent_pos = self._get_carry_pos(self.agent.pos, self.agent.carrying)
             self.agent.carrying.pos = ent_pos
             self.agent.carrying.dir = self.agent.dir
-        '''
+    
 
-        
+    def continuous_step(self, action):
+
+        pass
+
+    def step(self, action):
+        """
+        Perform one action and update the simulation
+        """
+        self.step_count += 1
+        self.no_collision = True
         if self.is_render_depth:
+            # act
+            self.discrete_step(action)
             # Generate 4-axis (front, back, left, right) depth pts
             obs = [np.mean(self.render_depth())]
             for i in range(3):
@@ -725,20 +749,22 @@ class MiniWorldEnv(gym.Env):
                 self.turn_agent(deg)
                 obs.append(np.mean(self.render_depth()))
                 self.turn_agent(-deg)
-            self.obs = obs
+            self.obs = np.array(obs)
+            done = not self.no_collision
         else:
+            self.discrete_step(action)
             # Generate the current camera image
             obs = self.render_obs()
-
+            done = False
+        
         # If the maximum time step count is reached
         if self.step_count >= self.max_episode_steps:
             done = True
             reward = 0
             return obs, reward, done, {}
 
+        # subclass env overrides reward
         reward = 0
-        done = False
-
         return obs, reward, done, {}
 
     def add_rect_room(
