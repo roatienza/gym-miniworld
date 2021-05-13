@@ -495,7 +495,7 @@ class MiniWorldEnv(gym.Env):
             self.observation_space = spaces.Box(
                 low=0.,
                 high=np.inf,
-                shape=(obs_height, obs_width, 1),
+                shape=(4,),
                 dtype='float32'
             )
             self.obs = np.zeros(self.observation_space.shape)
@@ -623,10 +623,13 @@ class MiniWorldEnv(gym.Env):
         # Pre-compile static parts of the environment into a display list
         self._render_static()
 
-        # Generate the first camera image
-        obs = self.render_obs()
+        if self.is_render_depth:
+            obs = self.generate_depth_obs()
+        else:
+            # Generate the first camera image
+            obs = self.render_obs()
 
-        # Return first observation
+            # Return first observation
         return obs
 
     def _get_carry_pos(self, agent_pos, ent):
@@ -733,6 +736,17 @@ class MiniWorldEnv(gym.Env):
 
         pass
 
+    def generate_depth_obs(self):
+        # Generate 4-axis (front, back, left, right) depth pts
+        obs = [np.mean(self.render_depth())]
+        for i in range(3):
+            deg = (i+1)*90.
+            self.turn_agent(deg)
+            obs.append(np.mean(self.render_depth()))
+            self.turn_agent(-deg)
+        self.obs = np.array(obs)
+        return self.obs
+
     def step(self, action):
         """
         Perform one action and update the simulation
@@ -742,14 +756,7 @@ class MiniWorldEnv(gym.Env):
         if self.is_render_depth:
             # act
             self.discrete_step(action)
-            # Generate 4-axis (front, back, left, right) depth pts
-            obs = [np.mean(self.render_depth())]
-            for i in range(3):
-                deg = (i+1)*90.
-                self.turn_agent(deg)
-                obs.append(np.mean(self.render_depth()))
-                self.turn_agent(-deg)
-            self.obs = np.array(obs)
+            obs = self.generate_depth_obs()
             done = not self.no_collision
         else:
             self.discrete_step(action)
