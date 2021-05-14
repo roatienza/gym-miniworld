@@ -1072,7 +1072,7 @@ class MiniWorldEnv(gym.Env):
             if self.no_collision:
                 return np.dot(self.distance_travelled,self.distance_travelled)**0.5
             else:
-                return -10000.
+                return -150.
         else:
             return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
 
