@@ -570,6 +570,8 @@ class MiniWorldEnv(gym.Env):
         This also randomizes many environment parameters (domain randomization)
         """
 
+        self.distance_travelled = 0.
+
         # Step count since episode start
         self.step_count = 0
 
@@ -654,6 +656,8 @@ class MiniWorldEnv(gym.Env):
             self.agent.right_vec * fwd_drift
         )
 
+        delta_distance = self.agent.dir_vec * fwd_dist
+
         if self.intersect(self.agent, next_pos, self.agent.radius):
             return False
 
@@ -667,7 +671,7 @@ class MiniWorldEnv(gym.Env):
             carrying.pos = next_carrying_pos
 
         self.agent.pos = next_pos
-
+        self.distance_travelled += delta_distance
         return True
 
     def turn_agent(self, turn_angle):
@@ -1066,14 +1070,7 @@ class MiniWorldEnv(gym.Env):
         """
         if self.is_render_depth:
             if self.no_collision:
-                #obs = np.mean(np.clip(self.obs, 0, 1))
-                front = self.obs[0]
-                right = self.obs[1]
-                if right >= 0.5 and right<= 1. and front > 1.:
-                    return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
-                else:
-                    return 0. 
-                #return 1. if obs >= 0.5 else 0.
+                return self.distance_travelled
             else:
                 return -1.
         else:

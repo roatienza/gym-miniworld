@@ -26,10 +26,10 @@ def step(action):
 
     obs, reward, done, info = env.step(action)
     if env.is_render_depth:
-        print("obs len", len(obs))
-        for i in range(len(obs)):
-            #print("obs[%d] shape: %s" % (i, obs[i].shape))
-            print(obs[i])
+        print("next state", obs)
+        #for i in range(len(obs)):
+        #    #print("obs[%d] shape: %s" % (i, obs[i].shape))
+        #    print(obs[i])
     else:
         print("obs shape: ", obs.shape)
         print('min: %f, max: %f' % (np.amin(obs), np.amax(obs)))
@@ -92,7 +92,9 @@ def on_key_press(symbol, modifiers):
     else:
         with torch.no_grad():
             state = torch.FloatTensor(state.reshape(1, -1)).to(device)
+            print("State:", state)
             action = actor(state).cpu().data.numpy().flatten()
+            print("Action:", action)
             action = np.argmax(action)
             print("Action:", action)
             state = step(action)
