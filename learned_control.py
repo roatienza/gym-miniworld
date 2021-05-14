@@ -16,7 +16,9 @@ import gym_miniworld
 import torch
 
 from policy import DDPGActor
+import os 
 
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def step(action):

@@ -458,14 +458,11 @@ class MiniWorldEnv(gym.Env):
         # Turn left or right by a small amount
         turn_left = 0
         turn_right = 1
-
         # Move forward or back by a small amount
         move_forward = 2
         move_back = 3
-
-        stay_put = 4
         # Done completing task
-        done = 5
+        done = 4
 
     def __init__(
         self,
