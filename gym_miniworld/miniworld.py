@@ -1072,8 +1072,8 @@ class MiniWorldEnv(gym.Env):
                 #obs = np.mean(np.clip(self.obs, 0, 1))
                 front = self.obs[0]
                 right = self.obs[1]
-                if right >= 0.5 and right<= 1.5 and front > 1.:
-                    return 1.
+                if right >= 0.5 and right<= 1. and front > 1.:
+                    return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
                 else:
                     return 0. 
                 #return 1. if obs >= 0.5 else 0.
