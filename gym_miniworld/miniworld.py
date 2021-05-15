@@ -1077,8 +1077,10 @@ class MiniWorldEnv(gym.Env):
         """
         if self.is_render_depth:
             if self.no_collision:
+                print("NO Collision", self.distance_travelled)
                 return self.distance_travelled
             else:
+                print("Collision -150")
                 return -150.
         else:
             return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
