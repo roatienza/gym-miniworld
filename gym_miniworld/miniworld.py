@@ -718,6 +718,7 @@ class MiniWorldEnv(gym.Env):
         else:
             print("unknown:", action)
         if self.is_render_depth:
+            print("Distance trav", self.distance_travelled)
             return
         # Pick up an object
         if action == self.actions.pickup:
@@ -780,7 +781,7 @@ class MiniWorldEnv(gym.Env):
 
         # subclass env overrides reward
         reward = 0
-        print("Distance trav", self.distance_travelled)
+        
         return obs, reward, done, {}
 
     def add_rect_room(
