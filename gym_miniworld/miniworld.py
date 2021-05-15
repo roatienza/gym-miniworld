@@ -695,7 +695,7 @@ class MiniWorldEnv(gym.Env):
         #    carrying.pos = pos
         #    carrying.dir = self.agent.dir
         if should_reward:
-            self.distance_travelled = 0
+            self.distance_travelled = -0.15
         return True
 
     def discrete_step(self, action):
