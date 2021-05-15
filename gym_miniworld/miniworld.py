@@ -1072,11 +1072,11 @@ class MiniWorldEnv(gym.Env):
         if self.is_render_depth:
             if self.no_collision:
                 if self.distance_travelled is None:
-                    return -1
+                    return 0
                 else:
                     return np.dot(self.distance_travelled,self.distance_travelled)**0.5
             else:
-                return -150.
+                return -1.
         else:
             return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
 
