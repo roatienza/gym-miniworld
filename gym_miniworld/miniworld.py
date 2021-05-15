@@ -657,18 +657,18 @@ class MiniWorldEnv(gym.Env):
         )
 
         #delta_distance = self.agent.dir_vec * fwd_dist
-
+        self.distance_travelled = 0
         if self.intersect(self.agent, next_pos, self.agent.radius):
             return False
 
-        carrying = self.agent.carrying
-        if carrying:
-            next_carrying_pos = self._get_carry_pos(next_pos, carrying)
+        #carrying = self.agent.carrying
+        #if carrying:
+        #    next_carrying_pos = self._get_carry_pos(next_pos, carrying)
 
-            if self.intersect(carrying, next_carrying_pos, carrying.radius):
-                return False
+        #    if self.intersect(carrying, next_carrying_pos, carrying.radius):
+        #        return False
 
-            carrying.pos = next_carrying_pos
+        #    carrying.pos = next_carrying_pos
 
         self.agent.pos = next_pos
         self.distance_travelled = 1
@@ -680,20 +680,20 @@ class MiniWorldEnv(gym.Env):
         """
 
         turn_angle *= (math.pi / 180)
-        orig_dir = self.agent.dir
+        #orig_dir = self.agent.dir
 
         self.agent.dir += turn_angle
 
-        carrying = self.agent.carrying
-        if carrying:
-            pos = self._get_carry_pos(self.agent.pos, carrying)
+        #carrying = self.agent.carrying
+        #if carrying:
+        #    pos = self._get_carry_pos(self.agent.pos, carrying)
 
-            if self.intersect(carrying, pos, carrying.radius):
-                self.agent.dir = orig_dir
-                return False
+        #    if self.intersect(carrying, pos, carrying.radius):
+        #        self.agent.dir = orig_dir
+        #        return False
 
-            carrying.pos = pos
-            carrying.dir = self.agent.dir
+        #    carrying.pos = pos
+        #    carrying.dir = self.agent.dir
 
         self.distance_travelled = 0
         return True
