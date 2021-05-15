@@ -711,7 +711,6 @@ class MiniWorldEnv(gym.Env):
             self.no_collision = self.turn_agent(turn_step)
         elif action == self.actions.turn_right:
             self.no_collision = self.turn_agent(-turn_step)
-        else:
         if self.is_render_depth:
             return
         # Pick up an object
