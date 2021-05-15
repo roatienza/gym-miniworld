@@ -705,8 +705,8 @@ class MiniWorldEnv(gym.Env):
         turn_step = self.params.sample(rand, 'turn_step')
         if action == self.actions.move_forward:
             self.no_collision = self.move_agent(fwd_step, fwd_drift)
-        elif action == self.actions.move_back:
-            self.no_collision = self.move_agent(-fwd_step, fwd_drift)
+        #elif action == self.actions.move_back:
+        #    self.no_collision = self.move_agent(-fwd_step, fwd_drift)
         elif action == self.actions.turn_left:
             self.no_collision = self.turn_agent(turn_step)
         elif action == self.actions.turn_right:
