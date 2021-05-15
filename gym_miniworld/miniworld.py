@@ -671,7 +671,8 @@ class MiniWorldEnv(gym.Env):
         #    carrying.pos = next_carrying_pos
 
         self.agent.pos = next_pos
-        self.distance_travelled = 1
+        self.distance_travelled = 1.
+        print("Distance trav", self.distance_travelled)
         return True
 
     def turn_agent(self, turn_angle):
