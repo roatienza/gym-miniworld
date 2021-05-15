@@ -695,6 +695,7 @@ class MiniWorldEnv(gym.Env):
             carrying.pos = pos
             carrying.dir = self.agent.dir
 
+        self.distance_travelled = None
         return True
 
     def discrete_step(self, action):
@@ -1070,9 +1071,10 @@ class MiniWorldEnv(gym.Env):
         """
         if self.is_render_depth:
             if self.no_collision:
-                reward = np.dot(self.distance_travelled,self.distance_travelled)**0.5
-                #reward -= 0.2 * (self.step_count / self.max_episode_steps)
-                return reward
+                if self.distance_travelled is None:
+                    return -1
+                else:
+                    return np.dot(self.distance_travelled,self.distance_travelled)**0.5
             else:
                 return -150.
         else:
