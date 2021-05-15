@@ -671,7 +671,7 @@ class MiniWorldEnv(gym.Env):
             carrying.pos = next_carrying_pos
 
         self.agent.pos = next_pos
-        self.distance_travelled += delta_distance
+        self.distance_travelled = delta_distance
         return True
 
     def turn_agent(self, turn_angle):
@@ -1070,7 +1070,9 @@ class MiniWorldEnv(gym.Env):
         """
         if self.is_render_depth:
             if self.no_collision:
-                return np.dot(self.distance_travelled,self.distance_travelled)**0.5
+                reward = np.dot(self.distance_travelled,self.distance_travelled)**0.5
+                #reward -= 0.2 * (self.step_count / self.max_episode_steps)
+                return reward
             else:
                 return -150.
         else:
