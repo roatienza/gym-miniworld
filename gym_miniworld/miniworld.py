@@ -752,7 +752,7 @@ class MiniWorldEnv(gym.Env):
             deg = (i+1)*90.
             self.turn_agent(deg, should_reward=False)
             obs.append(np.mean(self.render_depth()))
-            self.turn_agent(-deg)
+            self.turn_agent(-deg, should_reward=False)
         self.obs = np.array(obs)
         return self.obs
 
