@@ -15,7 +15,7 @@ class Maze(MiniWorldEnv):
         num_rows=8,
         num_cols=8,
         room_size=3,
-        max_episode_steps=None,
+        max_episode_steps=10000,
         **kwargs
     ):
         self.num_rows = num_rows
@@ -106,9 +106,9 @@ class Maze(MiniWorldEnv):
     def step(self, action):
         obs, reward, done, info = super().step(action)
 
-        if self.near(self.box):
-            reward += self._reward()
-            done = True
+        #if self.near(self.box):
+        reward += self._reward()
+        #    done = True
 
         return obs, reward, done, info
 
@@ -128,7 +128,7 @@ class MazeS3Fast(Maze):
         params.set('forward_step', forward_step)
         params.set('turn_step', turn_step)
 
-        max_steps = 300
+        #max_steps = 300
 
         super().__init__(
             num_rows=3,

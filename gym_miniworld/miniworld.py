@@ -658,8 +658,10 @@ class MiniWorldEnv(gym.Env):
 
         #delta_distance = self.agent.dir_vec * fwd_dist
         self.distance_travelled = 0
-        if self.intersect(self.agent, next_pos, self.agent.radius):
+        if self.intersect_by_distance():
             return False
+        #if self.intersect(self.agent, next_pos, self.agent.radius):
+        #    return False
 
         #carrying = self.agent.carrying
         #if carrying:
@@ -992,10 +994,17 @@ class MiniWorldEnv(gym.Env):
             max_z=max_z
         )
 
+    def intersect_by_distance(self):
+        self.generate_depth_obs()
+        if np.amin(self.obs) < 0.1:
+            return True
+        return False
+
     def intersect(self, ent, pos, radius):
         """
         Check if an entity intersects with the world
         """
+
 
         # Ignore the Y position
         px, _, pz = pos

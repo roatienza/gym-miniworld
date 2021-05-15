@@ -11,7 +11,7 @@ class OneRoom(MiniWorldEnv):
     placed randomly in one big room.
     """
 
-    def __init__(self, size=10, max_episode_steps=180, **kwargs):
+    def __init__(self, size=10, max_episode_steps=1000, **kwargs):
         assert size >= 2
         self.size = size
 
@@ -37,9 +37,9 @@ class OneRoom(MiniWorldEnv):
     def step(self, action):
         obs, reward, done, info = super().step(action)
 
-        if self.near(self.box):
-            reward += self._reward()
-            done = True
+        #if self.near(self.box):
+        reward += self._reward()
+        #    done = True
 
         return obs, reward, done, info
 

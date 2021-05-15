@@ -49,6 +49,7 @@ def step(action):
 #if __name__ == "__main__":
 parser = argparse.ArgumentParser()
 parser.add_argument('--env-name', default='MiniWorld-Hallway-v0')
+parser.add_argument("--hidden-dim", default=32, type=int, help="Actor MLP hidden dim")   
 parser.add_argument('--checkpoint', default='results/DDPG-best_reward.pth')
 parser.add_argument('--no-time-limit', action='store_true', help='ignore time step limits')
 parser.add_argument('--agent-view', action='store_true', help='show the agent view instead of the top view')
@@ -74,6 +75,7 @@ kwargs = {
     "state_dim": state_dim,
     "action_dim": action_dim,
     "max_action": max_action,
+    "hidden_dim": args.hidden_dim
 }
 
 actor = DDPGActor(**kwargs).to(device)
