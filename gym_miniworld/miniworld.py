@@ -656,7 +656,7 @@ class MiniWorldEnv(gym.Env):
             self.agent.right_vec * fwd_drift
         )
 
-        delta_distance = self.agent.dir_vec * fwd_dist
+        #delta_distance = self.agent.dir_vec * fwd_dist
 
         if self.intersect(self.agent, next_pos, self.agent.radius):
             return False
@@ -671,7 +671,7 @@ class MiniWorldEnv(gym.Env):
             carrying.pos = next_carrying_pos
 
         self.agent.pos = next_pos
-        self.distance_travelled = delta_distance
+        self.distance_travelled = 0
         return True
 
     def turn_agent(self, turn_angle):
@@ -695,7 +695,7 @@ class MiniWorldEnv(gym.Env):
             carrying.pos = pos
             carrying.dir = self.agent.dir
 
-        self.distance_travelled = None
+        self.distance_travelled = 0
         return True
 
     def discrete_step(self, action):
@@ -1071,13 +1071,9 @@ class MiniWorldEnv(gym.Env):
         """
         if self.is_render_depth:
             if self.no_collision:
-                if self.distance_travelled is None:
-                    return 0.
-                else:
-                    return 1.
-                    #return np.dot(self.distance_travelled,self.distance_travelled)**0.5
+                return self.distance_travelled
             else:
-                return -1.
+                return -150.
         else:
             return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
 
