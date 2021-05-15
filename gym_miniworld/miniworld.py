@@ -672,7 +672,6 @@ class MiniWorldEnv(gym.Env):
 
         self.agent.pos = next_pos
         self.distance_travelled = 1.
-        print("Distance trav", self.distance_travelled)
         return True
 
     def turn_agent(self, turn_angle):
@@ -781,6 +780,7 @@ class MiniWorldEnv(gym.Env):
 
         # subclass env overrides reward
         reward = 0
+        print("Distance trav", self.distance_travelled)
         return obs, reward, done, {}
 
     def add_rect_room(
