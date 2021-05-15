@@ -674,7 +674,7 @@ class MiniWorldEnv(gym.Env):
         self.distance_travelled = 1.
         return True
 
-    def turn_agent(self, turn_angle):
+    def turn_agent(self, turn_angle, should_reward=True):
         """
         Turn the agent left or right
         """
@@ -694,8 +694,8 @@ class MiniWorldEnv(gym.Env):
 
         #    carrying.pos = pos
         #    carrying.dir = self.agent.dir
-
-        self.distance_travelled = 0
+        if should_reward:
+            self.distance_travelled = 0
         return True
 
     def discrete_step(self, action):
@@ -750,7 +750,7 @@ class MiniWorldEnv(gym.Env):
         obs = [np.mean(self.render_depth())]
         for i in range(3):
             deg = (i+1)*90.
-            self.turn_agent(deg)
+            self.turn_agent(deg, should_reward=False)
             obs.append(np.mean(self.render_depth()))
             self.turn_agent(-deg)
         self.obs = np.array(obs)
