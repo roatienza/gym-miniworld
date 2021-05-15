@@ -460,9 +460,9 @@ class MiniWorldEnv(gym.Env):
         turn_right = 1
         # Move forward or back by a small amount
         move_forward = 2
-        move_back = 3
+        #move_back = 3
         # Done completing task
-        done = 4
+        done = 3
 
     def __init__(
         self,
@@ -492,7 +492,7 @@ class MiniWorldEnv(gym.Env):
             self.observation_space = spaces.Box(
                 low=0.,
                 high=np.inf,
-                shape=(4,),
+                shape=(len(self.actions)-1,),
                 dtype='float32'
             )
             self.obs = np.zeros(self.observation_space.shape)
