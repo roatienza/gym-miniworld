@@ -704,21 +704,15 @@ class MiniWorldEnv(gym.Env):
         fwd_drift = self.params.sample(rand, 'forward_drift')
         turn_step = self.params.sample(rand, 'turn_step')
         if action == self.actions.move_forward:
-            print("forward")
             self.no_collision = self.move_agent(fwd_step, fwd_drift)
         elif action == self.actions.move_back:
-            print("back")
             self.no_collision = self.move_agent(-fwd_step, fwd_drift)
         elif action == self.actions.turn_left:
-            print("left")
             self.no_collision = self.turn_agent(turn_step)
         elif action == self.actions.turn_right:
-            print("right")
             self.no_collision = self.turn_agent(-turn_step)
         else:
-            print("unknown:", action)
         if self.is_render_depth:
-            print("Distance trav", self.distance_travelled)
             return
         # Pick up an object
         if action == self.actions.pickup:
@@ -1079,10 +1073,8 @@ class MiniWorldEnv(gym.Env):
         """
         if self.is_render_depth:
             if self.no_collision:
-                print("NO Collision", self.distance_travelled)
                 return self.distance_travelled
             else:
-                print("Collision -150")
                 return -150.
         else:
             return 1.0 - 0.2 * (self.step_count / self.max_episode_steps)
