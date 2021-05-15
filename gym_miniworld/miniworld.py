@@ -704,13 +704,18 @@ class MiniWorldEnv(gym.Env):
         fwd_drift = self.params.sample(rand, 'forward_drift')
         turn_step = self.params.sample(rand, 'turn_step')
         if action == self.actions.move_forward:
+            print("forward")
             self.no_collision = self.move_agent(fwd_step, fwd_drift)
         elif action == self.actions.move_back:
+            print("back")
             self.no_collision = self.move_agent(-fwd_step, fwd_drift)
         elif action == self.actions.turn_left:
+            print("left")
             self.no_collision = self.turn_agent(turn_step)
         elif action == self.actions.turn_right:
+            print("right")
             self.no_collision = self.turn_agent(-turn_step)
+        print("unknown")
         if self.is_render_depth:
             return
         # Pick up an object
