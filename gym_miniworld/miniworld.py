@@ -492,7 +492,7 @@ class MiniWorldEnv(gym.Env):
             self.observation_space = spaces.Box(
                 low=0.,
                 high=np.inf,
-                shape=(len(self.actions)-1,),
+                shape=(4,),
                 dtype='float32'
             )
             self.obs = np.zeros(self.observation_space.shape)
